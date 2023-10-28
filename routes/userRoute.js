@@ -1,29 +1,30 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
+const { authenticate } = require('../middlewares/authenticate');
 
 // Route to add a user's nickname
-router.post("/nickname/add", userController.addNickname);
+router.post("/user/add", authenticate, userController.addUser);
 
 // Route to add changes made by the user
-router.post("/changes/add", userController.addChanges);
+router.post("/changes/add", authenticate, userController.addChanges);
 
 // Route to add user's struggle duration
-router.post("/strugleDuration/add", userController.addStrugleDuration);
+router.post("/strugleDuration/add", authenticate, userController.addStrugleDuration);
 
 // Route to add user's sleep time
-router.post("/sleepTime/add", userController.addSleepTime);
+router.post("/sleepTime/add", authenticate, userController.addSleepTime);
 
 // Route to add user's wake-up time
-router.post("/wakeupTime/add", userController.addWakeUpTime);
+router.post("/wakeupTime/add", authenticate, userController.addWakeUpTime);
 
 // Route to add user's sleep hours
-router.post("/sleepHours/add", userController.addSleepHours);
+router.post("/sleepHours/add", authenticate, userController.addSleepHours);
 
 // Route to retrieve user results
-router.get("/results/get", userController.getResults);
+router.get("/results/get", authenticate, userController.getResults);
 
 // Route to delete a user
-router.delete("/user", userController.deleteUser);
+router.delete("/user", authenticate, userController.deleteUser);
 
 module.exports = router;

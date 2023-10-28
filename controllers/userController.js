@@ -1,11 +1,22 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
+const bcrypt = require('bcrypt');
 
-const addNickname = asyncHandler(async (req, res) => {
+
+const addUser = asyncHandler(async (req, res) => {
   try {
-    const { nickname } = req.body;
+    const { nickname, password } = req.body;
+    if (!nickname || !password) {
+        return res.status(400).json('Missing required field(s). Please provide all required data');
+    }
 
-    const user = new User({nickname});
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+
+    const user = new User({
+        nickname:nickname,
+        password:hash
+    });
     const savedUser = await user.save();
 
     res.json({ id: savedUser._id, message: "User Created Successfully" });
@@ -196,7 +207,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  addNickname,
+  addUser,
   addChanges,
   addStrugleDuration,
   addSleepTime,
