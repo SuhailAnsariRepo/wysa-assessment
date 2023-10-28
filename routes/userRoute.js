@@ -6,6 +6,9 @@ const { authenticate } = require('../middlewares/authenticate');
 // Route to add a user's nickname
 router.post("/user/add", authenticate, userController.addUser);
 
+// Route to login user
+router.post("/user/login", authenticate, userController.loginUser);
+
 // Route to add changes made by the user
 router.post("/changes/add", authenticate, userController.addChanges);
 

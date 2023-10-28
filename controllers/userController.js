@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 const addUser = asyncHandler(async (req, res) => {
@@ -24,6 +25,34 @@ const addUser = asyncHandler(async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
+});
+
+const loginUser = asyncHandler(async (req, res) => {
+    try {
+        const { nickname, password } = req.body;
+        if (!nickname || !password) {
+            return res.status(400).json('Missing required field(s). Please provide all required data');
+        }
+
+        let user = await User.findOne({ nickname });
+        if (!user) {
+            return res.status(404).json('User not found.');
+        }
+
+        const isValid = bcrypt.compareSync(password, user.password);
+        if (!isValid) {
+            return res.status(400).json('Worng credentials.');
+        }
+        user = user.toObject();
+        delete user.password;
+
+        let accessToken = jwt.sign(user, accessTokenSecret, { expiresIn: '1d' });
+        user.accessToken = accessToken;
+
+        return res.json(user);
+    } catch (error) {
+        return ErrorHandler(req, res, next, error);
+    }
 });
 
 const addChanges = asyncHandler(async (req, res) => {
@@ -208,6 +237,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 module.exports = {
   addUser,
+  loginUser,
   addChanges,
   addStrugleDuration,
   addSleepTime,
