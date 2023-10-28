@@ -1,0 +1,14 @@
+{
+  "name": "wysa-assessment",
+  "version": "1.0.0",
+  "description": "Wysa Backend Mini Project",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Suhail Ansari",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
