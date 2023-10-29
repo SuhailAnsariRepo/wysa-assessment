@@ -14,24 +14,29 @@ const SleepHours = () => {
     }
     try {
       setLoading(true);
-      let res = await fetch(
-        `https://nice-tan-haddock-fez.cyclic.app/users/sleepHours`,
-        {
-          method: "POST",
-          body: JSON.stringify({ userResponse: sleepTime, nickname }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      // Get the token from wherever it is stored in your frontend (e.g., localStorage)
+      const token = localStorage.getItem("token"); // Example of getting token from localStorage, adjust based on your implementation
+  
+      let res = await fetch(`https://rich-tan-gopher-cap.cyclic.app/users/sleepHours`, {
+        method: "POST",
+        body: JSON.stringify({ userResponse: sleepTime, nickname }),
+        headers: {
+          "Content-Type": "application/json",
+          "token": `${token}` // Include the token in the Authorization header
+        },
+      });
+  
+      // Handle the response as per your requirements
       res = await res.json();
       setLoading(false);
       alert(res.message);
       nav("/efficiency");
     } catch (error) {
       console.log(error);
+      // Handle errors
     }
   };
+  
 
   if (loading) {
     return <Loader />;

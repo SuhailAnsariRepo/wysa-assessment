@@ -15,7 +15,7 @@ const HomePage = () => {
     try {
       setLoading(true);
       let res = await fetch(
-        `https://nice-tan-haddock-fez.cyclic.app/users/register`,
+        `https://rich-tan-gopher-cap.cyclic.app/users/register`,
         {
           method: "POST",
           body: JSON.stringify({ nickname: name, password }),
@@ -27,6 +27,10 @@ const HomePage = () => {
       res = await res.json();
       // console.log(res);
       setLoading(false);
+      if (res.token) {
+        // If the server sends back a token in the response
+        localStorage.setItem("token", res.token); // Store the token in localStorage
+      }
       if (res.message === "User already exist, Please login") {
         alert("User already exist,Please enter different username");
         return;

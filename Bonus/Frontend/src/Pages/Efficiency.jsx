@@ -9,24 +9,40 @@ const Efficiency = () => {
   const [sleepEfficiency, setSleepEfficiency] = useState("");
   const getData = async () => {
     try {
-      let res = await fetch(
-        `https://nice-tan-haddock-fez.cyclic.app/users/sleepEfficiency`,
-        {
-          method: "POST",
-          body: JSON.stringify({ nickname }),
-          headers: {
-            "Content-Type": "application/json",
-          },
+      // Retrieve auth token from localStorage or your preferred storage
+      const token = localStorage.getItem('token');
+  
+      let res = await fetch(`https://rich-tan-gopher-cap.cyclic.app/users/sleepEfficiency`, {
+        method: "POST",
+        body: JSON.stringify({ nickname }),
+        headers: {
+          "Content-Type": "application/json",
+          // Include the auth token in the headers if available
+          'token': `${token}`
+        },
+      });
+  
+      if (res.ok) {
+        res = await res.json();
+        setSleepEfficiency(res.sleepEfficiency);
+      } else {
+        // Handle unauthorized or other errors here
+        if (res.status === 401) {
+          // Handle unauthorized access (redirect to login page or show error message)
+          console.error("Unauthorized access. Redirecting to login page...");
+          // Redirect to login page or display an error message to the user
+        } else {
+          // Handle other errors
+          console.error("Error fetching data:", res.status);
+          // Handle other error scenarios as needed
         }
-      );
-      res = await res.json();
-    //   console.log(res);
-      setSleepEfficiency(res.sleepEfficiency);
-      //   nav("/sleephours");
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching data:", error);
+      // Handle network errors or other exceptions here
     }
   };
+  
 
   useEffect(() => {
     getData();

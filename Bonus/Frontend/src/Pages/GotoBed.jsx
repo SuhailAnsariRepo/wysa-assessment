@@ -16,13 +16,15 @@ const GotoBed = () => {
     }
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
       let res = await fetch(
-        `https://nice-tan-haddock-fez.cyclic.app/users/goTobed`,
+        `https://rich-tan-gopher-cap.cyclic.app/users/goTobed`,
         {
           method: "POST",
           body: JSON.stringify({ userResponse: bedTime, nickname }),
           headers: {
             "Content-Type": "application/json",
+            'token': `${token}`
           },
         }
       );

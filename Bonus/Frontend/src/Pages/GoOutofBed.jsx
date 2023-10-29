@@ -16,13 +16,15 @@ const GoOutofBed = () => {
     }
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
       let res = await fetch(
-        `https://nice-tan-haddock-fez.cyclic.app/users/getOutofBed`,
+        `https://rich-tan-gopher-cap.cyclic.app/users/getOutofBed`,
         {
           method: "POST",
           body: JSON.stringify({ userResponse: bedOutTime, nickname }),
           headers: {
             "Content-Type": "application/json",
+            'token': `${token}`
           },
         }
       );
