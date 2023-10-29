@@ -23,5 +23,9 @@ mongoose.connect(process.env.MONGODB_URI, {
 });
 
 app.use(express.json());
-app.use(cors());
-app.use('/api/user', userRoutes);
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+app.use('/users', userRoutes);

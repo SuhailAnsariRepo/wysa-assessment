@@ -1,248 +1,93 @@
-const asyncHandler = require("express-async-handler");
-const User = require("../models/userModel");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+const { UserModel } = require('../models/userModel.js');
 
+async function registerUser(req, res) {
+  const { nickname, password } = req.body;
 
-const addUser = asyncHandler(async (req, res) => {
-  try {
-    const { nickname, password } = req.body;
-    if (!nickname || !password) {
-        return res.status(400).json('Missing required field(s). Please provide all required data');
-    }
-
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(password, salt);
-
-    const user = new User({
-        nickname:nickname,
-        password:hash
-    });
-    const savedUser = await user.save();
-
-    res.json({ id: savedUser._id, message: "User Created Successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-const loginUser = asyncHandler(async (req, res) => {
-    try {
-        const { nickname, password } = req.body;
-        if (!nickname || !password) {
-            return res.status(400).json('Missing required field(s). Please provide all required data');
-        }
-
-        let user = await User.findOne({ nickname });
-        if (!user) {
-            return res.status(404).json('User not found.');
-        }
-
-        const isValid = bcrypt.compareSync(password, user.password);
-        if (!isValid) {
-            return res.status(400).json('Worng credentials.');
-        }
-        user = user.toObject();
-        delete user.password;
-
-        let accessToken = jwt.sign(user, accessTokenSecret, { expiresIn: '1d' });
-        user.accessToken = accessToken;
-
-        return res.json(user);
-    } catch (error) {
-        return ErrorHandler(req, res, next, error);
-    }
-});
-
-const addChanges = asyncHandler(async (req, res) => {
-  try {
-    const { id, changes } = req.body;
-
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(404).json({ message: "User Not Found" });
-    }
-
-    user.changes.push(...changes);
-    await user.save();
-
-    res.json({ message: "Changes Added Successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-const addStrugleDuration = asyncHandler(async (req, res) => {
-  try {
-    const { id, struggle } = req.body;
-
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(404).json({ message: "User Not Found" });
-    }
-
-    user.struggleDuration = struggle;
-    await user.save();
-
-    res.json({ message: "Struggle Added Successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-const addSleepTime = asyncHandler(async (req, res) => {
-  try {
-    const { id, sleepTime } = req.body;
-
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(404).json({ message: "User Not Found" });
-    }
-
-    user.bedTime = sleepTime;
-    await user.save();
-
-    res.json({ message: "Sleep time Added Successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-const addWakeUpTime = asyncHandler(async (req, res) => {
-  try {
-    const { id, wakeupTime } = req.body;
-
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(404).json({ message: "User Not Found" });
-    }
-
-    user.wakeUpTime = wakeupTime;
-    await user.save();
-
-    res.json({ message: "Sleep time Added Successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-const addSleepHours = asyncHandler(async (req, res) => {
-  try {
-    const { id, sleepHours } = req.body;
-
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(404).json({ message: "User Not Found" });
-    }
-
-    user.sleepingHours = sleepHours;
-    await user.save();
-
-    res.json({ message: "Sleep time Added Successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-function getSleepHealthScore(
-  bedTime,
-  wakeUpTime,
-  sleepingHours,
-  changes,
-  struggleDuration
-) {
-  let score = 0;
-
-  const [bedHour, bedMinute] = bedTime.split(":").map(Number);
-  const [wakeUpHour, wakeUpMinute] = wakeUpTime.split(":").map(Number);
-  const sleepDuration =
-    (wakeUpHour - bedHour) * 60 + (wakeUpMinute - bedMinute);
-
-  if (sleepingHours >= 7 && sleepingHours <= 9) {
-    score += 25;
-  }
-
-  for (let i = 0; i < changes.length; i++) {
-    if (changes[i] === "fallAsleep") {
-      score += 25;
-    } else if (changes[i] === "sleepThroughNight") {
-      score += 25;
-    } else if (changes[i] === "wakeUpRefreshed") {
-      score += 25;
-    }
-  }
-
-  if (struggleDuration === "Less than 2 weeks") {
-    score -= 10;
-  } else if (struggleDuration === "2 to 8 weeks") {
-    score -= 20;
-  } else if (struggleDuration === "More than 8 weeks") {
-    score -= 30;
-  }
-
-  if (sleepingHours < 6 || sleepingHours > 9) {
-    score -= 20;
-  }
-
-  if (sleepDuration > 0 && (sleepingHours * 60) / sleepDuration < 0.85) {
-    score -= 20;
-  }
-
-  return score;
-}
-
-const getResults = asyncHandler(async (req, res) => {
-  try {
-    const { id } = req.query;
-
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(404).json({ message: "User Not Found" });
-    }
-
-    const score = getSleepHealthScore(
-      user.bedTime,
-      user.wakeUpTime,
-      user.sleepingHours,
-      user.changes,
-      user.struggleDuration
-    );
-
-    res.json({ nickname: user.nickname, sleepHealthScore: score });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-const deleteUser = asyncHandler(async (req, res) => {
-  const { id } = req.query;
-
-  const user = await User.findById(id);
+  const user = await UserModel.findOne({ nickname });
 
   if (user) {
-    await user.remove();
-    res.json({ message: "User removed" });
-  } else {
-    res.status(404);
-    throw new Error("User Not Found");
+    return res.status(201).send({ message: "User already exists, please login." });
   }
-});
+
+  bcrypt.hash(password, 5, async (err, hash) => {
+    if (err) {
+      return res.status(400).send({ message: "Something Went Wrong" });
+    }
+
+    try {
+      const newUser = new UserModel({
+        nickname,
+        password: hash,
+      });
+      await newUser.save();
+
+      // Generate JWT token
+      const token = jwt.sign({ username: newUser.nickname }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: '1h', // Token expires in 1 hour (you can adjust the expiration time)
+      });
+
+      res.status(200).send({ message: "User Registration Successful", token }); // Include token in the response
+    } catch (e) {
+      res.status(401).send({ message: "Something Went Wrong" });
+    }
+  });
+}
+
+async function addSleepStruggle(req, res) {
+  const { nickname, userResponse } = req.body;
+  await UserModel.findOneAndUpdate({ nickname }, { sleepStruggle: userResponse });
+  res.status(200).send({
+    message: "Sleep Struggle response added",
+    displayMessage: "Successful",
+  });
+}
+
+async function addGoToBed(req, res) {
+  const { nickname, userResponse } = req.body;
+  await UserModel.findOneAndUpdate({ nickname }, { goTobed: userResponse });
+  res.status(200).send({
+    message: "Go to bed response added",
+    displayMessage: "Successful",
+  });
+}
+
+async function addGetOutOfBed(req, res) {
+  const { nickname, userResponse } = req.body;
+  await UserModel.findOneAndUpdate({ nickname }, { getOutofBed: userResponse });
+  res.status(200).send({
+    message: "Get out of Bed response added",
+    displayMessage: "Successful",
+  });
+}
+
+async function addSleepHours(req, res) {
+  const { nickname, userResponse } = req.body;
+  await UserModel.findOneAndUpdate({ nickname }, { sleepHours: userResponse });
+  res.status(200).send({
+    message: "Sleep Hours response added",
+    displayMessage: "Successful",
+  });
+}
+
+async function calculateSleepEfficiency(req, res) {
+  const { nickname } = req.body;
+  const user = await UserModel.findOne({ nickname });
+
+  const sleepingTime = parseInt(user.goTobed.split(":")[0]);
+  const wakingTime = parseInt(user.getOutofBed.split(":")[0]);
+
+  const sleepEfficiency = Math.ceil((user.sleepHours * 100) / (wakingTime - sleepingTime));
+
+  res.status(200).send({ sleepEfficiency, displayMessage: "Successful" });
+}
 
 module.exports = {
-  addUser,
-  loginUser,
-  addChanges,
-  addStrugleDuration,
-  addSleepTime,
-  addWakeUpTime,
+  registerUser,
+  addSleepStruggle,
+  addGoToBed,
+  addGetOutOfBed,
   addSleepHours,
-  getResults,
-  deleteUser,
+  calculateSleepEfficiency,
 };
