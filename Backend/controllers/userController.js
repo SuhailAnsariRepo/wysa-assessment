@@ -79,6 +79,7 @@ async function calculateSleepEfficiency(req, res) {
   const wakingTime = parseInt(user.getOutofBed.split(":")[0]);
 
   const sleepEfficiency = Math.ceil((user.sleepHours * 100) / (wakingTime - sleepingTime));
+  await UserModel.findOneAndUpdate({ nickname }, { sleepEfficiency: sleepEfficiency });
 
   res.status(200).send({ sleepEfficiency, displayMessage: "Successful" });
 }
