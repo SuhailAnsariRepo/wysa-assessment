@@ -4,7 +4,8 @@
   "description": "Wysa Backend Mini Project",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "author": "Suhail Ansari",
   "license": "ISC",
