@@ -75,10 +75,30 @@ async function calculateSleepEfficiency(req, res) {
   const { nickname } = req.body;
   const user = await UserModel.findOne({ nickname });
 
-  const sleepingTime = parseInt(user.goTobed.split(":")[0]);
-  const wakingTime = parseInt(user.getOutofBed.split(":")[0]);
+  // Convert HH:mm time format to decimal hours
+  function convertToDecimalHours(time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours + minutes / 60;
+  }
 
-  const sleepEfficiency = Math.ceil((user.sleepHours * 100) / (wakingTime - sleepingTime));
+  const sleepingTimeInHours = convertToDecimalHours(user.goTobed);
+  const wakingTimeInHours = convertToDecimalHours(user.getOutofBed);
+
+  let totalHours = 0;
+
+  if (wakingTimeInHours >= sleepingTimeInHours) {
+    totalHours = wakingTimeInHours - sleepingTimeInHours;
+  } else {
+    // If waking time is on the next day, adjust the calculation
+    totalHours = (24 - sleepingTimeInHours) + wakingTimeInHours;
+  }
+
+  let sleepEfficiency = 0;
+
+  if (totalHours > 0 && user.sleepHours > 0) {
+    sleepEfficiency = Math.min(100, Math.ceil((user.sleepHours / totalHours) * 100));
+  }
+
   await UserModel.findOneAndUpdate({ nickname }, { sleepEfficiency: sleepEfficiency });
 
   res.status(200).send({ sleepEfficiency, displayMessage: "Successful" });
