@@ -139,10 +139,7 @@ Host: {{baseUrl}}
 Calculate effiency based on data added.
   {
     "updateObject": {
-      username: 'Suhail',
-      goTobed: '11:00 Pm',
-      getOutofBed: '7:00 Am',
-      sleepHours: '5',
+      username: 'Suhail'
     }
   }
 }
