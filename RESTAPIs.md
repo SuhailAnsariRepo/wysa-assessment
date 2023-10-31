@@ -23,7 +23,32 @@ Host: {{baseUrl}}
 }
 ```
 
-## For screen 2, Add Sleep Struggle data.
+## For screen 2, Add Sleep Change data.
+
+### POST /sleepChange
+Host: {{baseUrl}}
+```
+{
+  "updateObject": {
+    username: "Suhail",
+    sleepchange: [
+        "I would sleep through the night",
+        "I'd wake up on time, refereshed"
+    ]
+  }
+}
+```
+### response:
+```
+
+{
+  "status": 200,
+  "msg: "Sleep Struggle response added",
+  "displayMessage": "Successful"
+}
+```
+
+## For screen 3, Add Sleep Struggle data.
 
 ### POST /sleepStuggle
 Host: {{baseUrl}}
@@ -45,7 +70,7 @@ Host: {{baseUrl}}
 }
 ```
 
-## For screen 3, Add Go to Bed Time.
+## For screen 4, Add Go to Bed Time.
 
 ### POST /goTobed
 Host: {{baseUrl}}
@@ -65,7 +90,7 @@ Host: {{baseUrl}}
   displayMessage: "Successful",
 }
 ```
-## For screen 4, Add Get Out of Bed Time.
+## For screen 5, Add Get Out of Bed Time.
 
 ### POST /getOutofBed
 Host: {{baseUrl}}
@@ -85,7 +110,7 @@ Host: {{baseUrl}}
   displayMessage: "Successful"
 }
 ```
-## For screen 5, Add typical day sleep Hours.
+## For screen 6, Add typical day sleep Hours.
 
 ### POST /sleepHours
 Host: {{baseUrl}}
@@ -105,7 +130,7 @@ Host: {{baseUrl}}
   displayMessage: "Successful",
 }
 ```
-## For screen 6, Calculate Efficiency.
+## For screen 7, Calculate Efficiency.
 
 ### POST /sleepEfficiency
 Host: {{baseUrl}}
@@ -113,14 +138,12 @@ Host: {{baseUrl}}
 {
 Calculate effiency based on data added.
   {
-    \_id: new ObjectId("645f527d5024d0c22489d2ba"),
-    username: 'Suhail',
-    sleepStuggle: '2 to 8 weeks',
-    goTobed: '11:00 Pm',
-    getOutofBed: '7:00 Am',
-    sleepHours: '5',
-    sleepEfficiency: 0,
-    \_\_v: 0
+    "updateObject": {
+      username: 'Suhail',
+      goTobed: '11:00 Pm',
+      getOutofBed: '7:00 Am',
+      sleepHours: '5',
+    }
   }
 }
 ```
@@ -136,6 +159,7 @@ Calculate effiency based on data added.
 ```
 const userSchema = mongoose.Schema({
   username: { type: String, required: true },
+  sleepChange: [{ type: String }],
   sleepStuggle: { type: String ,default:""},
   goTobed: { type: String,default:"" },
   getOutofBed: { type: String ,default:""},
