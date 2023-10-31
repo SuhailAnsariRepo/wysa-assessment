@@ -49,22 +49,26 @@ This fullstack project is already hosted here [Wysa Sleep Efficiency Tracker](ht
 
 - **Description:** User registration route.
 
-### 2. POST /sleepStruggle
+### 2. POST /sleepChange
+
+- **Description:** Add the track of sleep change data.
+  
+### 3. POST /sleepStruggle
 
 - **Description:** Add sleep struggle data.
 
-### 3. POST /goTobed
+### 4. POST /goTobed
 
 - **Description:** Add data about the time the user goes to bed.
 
-### 4. POST /getOutofBed
+### 5. POST /getOutofBed
 
 - **Description:** Add data about the time the user gets out of bed.
 
-### 5. POST /sleepHours
+### 6. POST /sleepHours
 
 - **Description:** Add data about the number of sleep hours.
 
-### 6. POST /sleepEfficiency
+### 7. POST /sleepEfficiency
 
 - **Description:** Calculate sleep efficiency.
