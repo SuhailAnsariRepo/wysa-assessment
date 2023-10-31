@@ -9,6 +9,7 @@ const userSchema = mongoose.Schema(
     getOutofBed: { type: String, default: "" },
     sleepHours: { type: String, default: "" },
     sleepEfficiency: { type: Number, default: 0 },
+    sleepChange: [{ type: String }],
   },
   {
     versionKey: false,

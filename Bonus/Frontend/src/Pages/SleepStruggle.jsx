@@ -42,6 +42,8 @@ const SleepStruggle = () => {
   if (loading) {
     return <Loader/>
   }
+
+
   return (
     <div style={{width:"30%",margin:"auto"}}>
       <p style={{ fontSize: "24px" }}>
@@ -49,31 +51,25 @@ const SleepStruggle = () => {
       </p>
       <div>
         <p
-          className="sleepstruggle"
-          id="lessthan"
+          className={`sleepstruggle ${value === "Less than 2 Weeks" ? "check" : ""}`}
           onClick={() => {
             setValue("Less than 2 Weeks");
-            document.getElementById("lessthan").classList.toggle("check");
           }}
         >
           Less than 2 Weeks
         </p>
         <p
-          className="sleepstruggle"
-          id="between"
+          className={`sleepstruggle ${value === "2 to 8 weeks" ? "check" : ""}`}
           onClick={() => {
             setValue("2 to 8 weeks");
-            document.getElementById("between").classList.toggle("check");
           }}
         >
           2 to 8 weeks
         </p>
         <p
-          id="morethan"
-          className="sleepstruggle"
+          className={`sleepstruggle ${value === "More than 8 weeks" ? "check" : ""}`}
           onClick={() => {
             setValue("More than 8 weeks");
-            document.getElementById("morethan").classList.toggle("check");
           }}
         >
           More than 8 weeks

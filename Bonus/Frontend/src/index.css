@@ -16,6 +16,11 @@ body {
 .check {
   background-color: green;
 }
+
+.uncheck {
+  background-color: gray;
+}
+
 .sleepstruggle:hover {
   cursor: pointer;
 }

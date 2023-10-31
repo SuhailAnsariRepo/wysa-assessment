@@ -9,5 +9,7 @@ router.post("/goTobed", authenticate, userController.addGoToBed);
 router.post("/getOutofBed", authenticate, userController.addGetOutOfBed);
 router.post("/sleepHours", authenticate, userController.addSleepHours);
 router.post("/sleepEfficiency", authenticate, userController.calculateSleepEfficiency);
+router.post("/sleepChange", authenticate, userController.addSleepChange);
+
 
 module.exports = router;

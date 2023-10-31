@@ -36,7 +36,7 @@ const HomePage = () => {
         return;
       }
       localStorage.setItem("nickname", JSON.stringify(name));
-      nav("/sleepstruggle");
+      nav("/sleepchange");
     } catch (error) {
       console.log(error);
       return;

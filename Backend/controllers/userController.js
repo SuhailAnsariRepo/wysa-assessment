@@ -44,6 +44,26 @@ async function addSleepStruggle(req, res) {
   });
 }
 
+async function addSleepChange(req, res) {
+  const { nickname, userResponses } = req.body;
+  try {
+    await UserModel.findOneAndUpdate(
+      { nickname },
+      { $push: { sleepChange: { $each: userResponses } } }
+    );
+    res.status(200).send({
+      message: "Sleep Change responses added",
+      displayMessage: "Successful",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      message: "Failed to add Sleep Change responses",
+      displayMessage: "Failed",
+    });
+  }
+}
+
 async function addGoToBed(req, res) {
   const { nickname, userResponse } = req.body;
   await UserModel.findOneAndUpdate({ nickname }, { goTobed: userResponse });
@@ -111,4 +131,5 @@ module.exports = {
   addGetOutOfBed,
   addSleepHours,
   calculateSleepEfficiency,
+  addSleepChange
 };
