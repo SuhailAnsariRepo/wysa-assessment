@@ -31,7 +31,7 @@ const HomePage = () => {
         // If the server sends back a token in the response
         localStorage.setItem("token", res.token); // Store the token in localStorage
       }
-      if (res.message === "User already exist, Please login") {
+      if (res.message === "User already exists, please login.") {
         alert("User already exist,Please enter different username");
         return;
       }
